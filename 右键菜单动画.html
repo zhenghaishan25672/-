@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zhs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+			margin:0;
+			padding: 0;
+			z-index: 5;
+		}
+		body{
+			overflow: hidden;
+		}
+        #rightMenu{
+            position: relative;
+            width:300px;
+            height:300px;
+        }
+        @keyframes rotate{
+			0%{transform:scale(0.2)rotate(0deg);}
+			100%{transform:scale(1)rotate(180deg);}
+        }
+		@keyframes rotate1{
+			0%{transform:scale(1)rotate(180deg);}
+			100%{transform:scale(0.2)rotate(0deg);}
+		}
+        #rightMenu ul{
+            position: absolute;
+            width:250px;
+            height:230px;
+        }
+        #rightMenu li{
+			box-shadow:0px 0px 15px sandybrown;
+			border: solid 2px red;
+			border-left-color: #FFA500;
+			border-top-color: #FFA500;
+            width:80px;
+            height:80px;
+            border-radius: 50%;
+            position: absolute;
+            list-style: none;
+			transition: 1s;
+        }
+        ul li:nth-of-type(1){
+            left: 50%;top:0;margin-left: -40px;
+		}
+        ul li:nth-of-type(2){
+			left: 0;bottom:0;
+		}
+        ul li:nth-of-type(3){
+			right: 0;bottom:0;
+        }
+        .rightMenu_fall{
+            transform: rotate(180deg);  
+            left:50%;
+            top:50%;
+            margin-left: -125px;
+            margin-top: -90px;
+        }
+        .rightMenu_straight{
+            left: 50%;
+            top:50%;
+            margin-left: -125px;
+            margin-top: -140px;
+        }
+        span{
+            position: absolute;
+            top:50%;
+			left:50%;
+            color:white;
+			font-weight: 1000;
+			-webkit-text-stroke: 0.5px red;
+        }
+        .rightMenu_straight li:nth-of-type(1){
+            background-image: url(user1.png);
+            background-size: 80px 80px;
+        }
+        .rightMenu_straight li:nth-of-type(2){
+            background-image: url(user2.png);
+            background-size: 80px 80px;
+        }
+        .rightMenu_straight li:nth-of-type(3){
+            background-image: url(user3.png);
+            background-size: 80px 80px;
+        }
+        .rightMenu_fall li:nth-of-type(1){
+            background-image: url(user4.png);
+            background-size: 80px 80px;
+            transform: rotate(180deg);
+        }
+        .rightMenu_fall li:nth-of-type(2){
+            background-image: url(user5.png);
+            background-size: 80px 80px;
+            transform: rotate(180deg);
+        }
+        .rightMenu_fall li:nth-of-type(3){
+            background-image: url(user6.png);
+            background-size: 80px 80px;
+            transform: rotate(180deg);
+        }
+        .rightMenu_straight li:nth-of-type(1) span{
+            margin-top: -8px;
+            margin-left: -16px; 
+        }
+        .rightMenu_straight li:nth-of-type(2) span{
+            margin-top: -8px;
+            margin-left: -32px;
+        }
+        .rightMenu_straight li:nth-of-type(3) span{
+            margin-top: -8px;
+            margin-left: -24px;
+        }
+        .rightMenu_fall li:nth-of-type(1) span{
+            margin-top: -8px;
+            margin-left: -16px;
+        }
+        .rightMenu_fall li:nth-of-type(2) span{
+            margin-top: -8px;
+            margin-left: -24px;
+        }
+        .rightMenu_fall li:nth-of-type(3) span{
+            margin-top: -8px;
+            margin-left: -24px;
+        }
+		/* 透视镜样式 */
+		#mirror{
+			position: absolute;
+			width: 200px;
+			height: 200px;
+			border-radius: 50%;
+			border: white solid 5px;
+			background: url(background5.jpg);
+			background-size: cover;
+			background-attachment: fixed;
+		}
+    </style>
+	<link rel="stylesheet" type="text/css" href="index_bg.css"/>	
+</head>
+<body>
+	<div class="slideshow" >
+		<div class="slideshow-image" style="background-image: url(background1.jpg)"></div>
+		<div class="slideshow-image" style="background-image: url(background2.jpg)"></div>
+		<div class="slideshow-image" style="background-image: url(background3.jpg)"></div>
+		<div class="slideshow-image" style="background-image: url(background4.jpg)"></div>
+	</div>
+	<div id='mirror' style='display: none;'></div>
+	<audio src="奈叶1.mp3" controls="controls" preload id="music" hidden></audio>
+    <div id="rightMenu" style='display: none;'>
+        <ul class='rightMenu_straight'>
+            <li><span>首页</span></li>
+            <li><span>更新日志</span></li>
+            <li><span>留言板</span></li>
+        </ul>
+        <ul class='rightMenu_fall'>
+            <li><span>首页</span></li>
+            <li><span>上一页</span></li>
+            <li><span>下一页</span></li>
+        </ul>
+    </div>
+</body>
+    <script>
+        var oMenu = document.getElementById("rightMenu");
+		var mirror = document.getElementById("mirror");
+		var audio = document.getElementById('music');
+         //自定义右键菜单
+			document.oncontextmenu = function (event){  
+			if(oMenu.style.display == "block"){
+				 audio.currentTime = 0;// 重置
+				 audio.pause();
+				 oMenu.style.top =  event.clientY - oMenu.offsetHeight/2 + "px";
+				 oMenu.style.left = event.clientX - oMenu.offsetWidth/2 + "px";
+				 menuOut(event);
+				 oMenu.style.animation = 'rotate1 0.3s linear';
+				 mirror.style.display = 'none';	
+				 document.body.removeEventListener('mousemove',mirrorMove,false);
+				 setTimeout(function(){ oMenu.style.display = "none"; }, 250);
+			}else if(oMenu.style.display == "none"){
+				audio.play();// 播放
+				oMenu.style.display = "block";
+				oMenu.style.top = event.clientY - oMenu.offsetHeight/2 + "px";
+				oMenu.style.left = event.clientX - oMenu.offsetWidth/2 + "px";
+				menuOut(event);
+				oMenu.style.animation = 'rotate 0.3s linear';
+				document.body.addEventListener('mousemove',mirrorMove,false);
+			}
+			return false;
+		};
+		//透视镜移动
+		function mirrorMove(event){
+			var x= event.clientX - 100;
+			var y= event.clientY - 100;
+			mirror.style.display = 'block';	
+			mirror.style.cssText = "transform: translate("+x+"px,"+y+"px);background-position:"+((x>0)?"-":"")+Math.abs(x)+"px " +((y>0)?"-":"")+Math.abs(y)+"px";
+		}
+		//防止菜单溢出
+		function menuOut(event){
+			//最大显示范围
+			maxHeight = document.documentElement.clientHeight - oMenu.offsetHeight ;
+			maxWidth = document.documentElement.clientWidth - oMenu.offsetWidth ;
+			
+			if((event.clientY - oMenu.offsetHeight/2)<0){
+				oMenu.style.top = 0 +'px';
+			}
+			if((event.clientY - oMenu.offsetHeight/2)> maxHeight){
+				oMenu.style.top = maxHeight +'px';
+			}
+			
+			if((event.clientX - oMenu.offsetWidth/2)<0){
+				oMenu.style.left = 0 +'px';
+			}
+			// console.log("菜单宽度:"+(event.clientX - oMenu.offsetWidth/2)+"页面宽度:"+(document.documentElement.clientWidth-oMenu.offsetWidth));
+			if((event.clientX - oMenu.offsetWidth/2)> maxWidth){
+				oMenu.style.left = maxWidth +'px';
+			}
+		}
+		//点击隐藏菜单
+		document.onclick = function ()
+		{	
+			audio.currentTime = 0;// 重置
+			audio.pause();
+			oMenu.style.animation = 'rotate1 0.3s linear';
+			mirror.style.display = 'none';	
+			document.body.removeEventListener('mousemove',mirrorMove,false);
+			setTimeout(function(){ oMenu.style.display = "none"; }, 100);
+		};
+		
+		// //js中获取css中的transform属性
+							// var st = window.getComputedStyle(oMenu, null);
+							// var tr = st.getPropertyValue('transform');
+							// var values = tr.split('(')[1].split(')')[0].split(',');
+						 //    var a = values[0];
+						 //    var b = values[1];
+						 //    var c = values[2];
+						 //    var d = values[3];
+							// 
+						 //    var scale = Math.sqrt(a * a + b * b);
+						 //    console.log('Scale: ' + scale);
+							// 
+						 //    var sin = b / scale;
+						 //    var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+		//       console.log('Rotate: ' + angle + 'deg');
+    </script>
+</html>
